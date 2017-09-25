@@ -1,0 +1,31 @@
+{
+  "name": "graphql-basics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pavel-koltun/graphql-basics.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pavel-koltun/graphql-basics/issues"
+  },
+  "homepage": "https://github.com/pavel-koltun/graphql-basics#readme",
+  "devDependencies": {
+    "eslint": "^4.7.2",
+    "eslint-config-google": "^0.9.1"
+  },
+  "dependencies": {
+    "express": "^4.15.5",
+    "express-graphql": "^0.6.11",
+    "graphql": "^0.11.3",
+    "node-fetch": "^1.7.3",
+    "xml2js": "^0.4.19"
+  }
+}
