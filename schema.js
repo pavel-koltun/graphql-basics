@@ -8,8 +8,20 @@ const {
   GraphQLString,
   GraphQLList,
 } = require('graphql');
+const {GOOGLE_API_KEY, GOODREADS_API_KEY} = require('./credentials');
 
-const API_KEY = 'vUES5r9cSRna9CdS2xTyA';
+/**
+  @param {string} text the text (query) to translate
+  @param {string} lang target language
+  @return {string} translated text
+*/
+function translate(text, lang) {
+  const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}&target=${lang}&q=${encodeURIComponent(text)}`;
+
+  return fetch(url)
+    .then((response) => response.json())
+    .then((response) => response.data.translations[0].translatedText);
+}
 
 const BookType = new GraphQLObjectType({
   name: 'Book',
@@ -17,7 +29,13 @@ const BookType = new GraphQLObjectType({
   fields: () => ({
     title: {
       type: GraphQLString,
-      resolve: (xml) => xml.GoodreadsResponse.book[0].title[0],
+      args: {
+        lang: {type: GraphQLString},
+      },
+      resolve: (xml, args) => {
+        const title = xml.GoodreadsResponse.book[0].title[0];
+        return args.lang ? translate(title, args.lang) : title;
+      },
     },
     isbn: {
       type: GraphQLString,
@@ -44,7 +62,7 @@ const AuthorType = new GraphQLObjectType({
           .map((elem) => elem.id[0]._);
 
         return Promise.all(
-          ids.map((id) => fetch(`https://www.goodreads.com/book/show/${id}.xml?key=${API_KEY}`)
+          ids.map((id) => fetch(`https://www.goodreads.com/book/show/${id}.xml?key=${GOODREADS_API_KEY}`)
             .then((response) => response.text())
             .then(parseXML))
         );
@@ -64,7 +82,7 @@ module.exports = new GraphQLSchema({
           id: {type: GraphQLInt},
         },
         resolve: (root, args) => fetch(
-          `https://www.goodreads.com/author/show.xml?id=${args.id}&key=${API_KEY}`
+          `https://www.goodreads.com/author/show.xml?id=${args.id}&key=${GOODREADS_API_KEY}`
         ).then((response) => response.text())
         .then(parseXML),
       },
